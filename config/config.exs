@@ -36,7 +36,8 @@ config :leagues, Leagues.Http.Server,
   port: 8080
 
 config :leagues,
-  maru_servers: [Leagues.Http.Server]
+  maru_servers: [Leagues.Http.Server],
+  scores_filename_csv: "data.csv"
 
 config :maru, Leagues.Http,
   versioning: [

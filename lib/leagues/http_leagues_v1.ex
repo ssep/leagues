@@ -20,10 +20,8 @@ defmodule Leagues.Http.Leagues.V1 do
       desc "Get all available leagues"
       get do
         Logger.info("Get request for all available leagues")
-        {:ok, leagues} = Leagues.Api.get_leagues()
-        conn
-        |> put_status(200)
-        |> json(leagues)
+        reply = Leagues.Api.get_leagues()
+        Leagues.Http.response(conn, reply)
       end
 
       route_param :league, type: String, regexp: ~r/^[a-z0-9A-Z]+$/ do
@@ -37,11 +35,8 @@ defmodule Leagues.Http.Leagues.V1 do
               league = params[:league]
               season = params[:season]
               Logger.info("Get scores for league '#{league}' and season '#{season}'")
-              {:ok, scores} = Leagues.Api.get_scores(league, season)
-              
-              conn
-              |> put_status(200)
-              |> json(scores)
+              reply = Leagues.Api.get_scores(league, season)
+              Leagues.Http.response(conn, reply)
             end
           end
 
@@ -49,11 +44,8 @@ defmodule Leagues.Http.Leagues.V1 do
           get do
             league = params[:league]
             Logger.info("Get seasons for league '#{league}'")
-            {:ok, seasons} = Leagues.Api.get_seasons(league)
-            
-            conn
-            |> put_status(200)
-            |> json(seasons)
+            reply = Leagues.Api.get_seasons(league)
+            Leagues.Http.response(conn, reply)
           end
           
         end # namespace :seasons end

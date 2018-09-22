@@ -11,6 +11,7 @@ defmodule Leagues.Sup do
 
   def init(_arg) do
     children = [
+      Leagues.Storage,
       Leagues.Http.Server
     ]
 

@@ -35,5 +35,17 @@ defmodule Leagues.Http do
   end
 
   mount Leagues.Http.Leagues.V1
+
+  def response(conn, {:ok, data}) do
+    conn
+    |> put_status(200)
+    |> json(data)
+  end
+
+  def response(conn, {:error, :not_found}) do
+    conn
+    |> put_status(404)
+    |> json(%{message: "Data not found"})
+  end
   
 end
