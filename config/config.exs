@@ -28,3 +28,19 @@ use Mix.Config
 # here (which is why it is important to import them last).
 #
 #     import_config "#{Mix.env}.exs"
+
+config :leagues, Leagues.Http.Server,
+  adapter: Plug.Adapters.Cowboy2,
+  plug: Leagues.Http,
+  scheme: :http,
+  port: 8080
+
+config :leagues,
+  maru_servers: [Leagues.Http.Server]
+
+config :maru, Leagues.Http,
+  versioning: [
+    using: :path
+  ]
+
+config :logger, level: :debug

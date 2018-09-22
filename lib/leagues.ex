@@ -1,18 +1,14 @@
 defmodule Leagues do
+  use Application
   @moduledoc """
-  Documentation for Leagues.
+  Application behavior for leagues
   """
 
   @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> Leagues.hello
-      :world
-
-  """
-  def hello do
-    :world
+  Application start callback
+  """  
+  def start(_type, _args) do
+    Leagues.Sup.start_link()
   end
+
 end
