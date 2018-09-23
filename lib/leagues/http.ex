@@ -2,6 +2,15 @@ defmodule Leagues.Http do
   use Leagues.Http.Server
   require Logger
 
+  ## There is not protobuf standand header
+  ## This is the one accepted as such here
+  @protobuf_headers ["application/x-protobuf",
+                     "application/vnd.google.protobuf",
+                     "application/octet-stream"]
+
+  @accept_hdr "accept"
+  @content_type_hdr "content-type"
+
   @moduledoc """
   Entry point for HTTP requests for the leagues application
   """
@@ -36,16 +45,62 @@ defmodule Leagues.Http do
 
   mount Leagues.Http.Leagues.V1
 
-  def response(conn, {:ok, data}) do
+  ##
+  ## Utility functions to build replies
+  ##
+  def response(conn, reply) do
+    type = get_data_type(conn)
+    response(conn, reply, type)
+  end
+
+
+  def response(conn, {:ok, data}, :protobuf) do
+    Logger.debug("Processing protobuf with data #{inspect data}")
+    conn
+    |> put_resp_header(@content_type_hdr, accept_header(conn))
+    |> send_resp(200, Leagues.Http.Protobuf.encode(data))
+    |> halt()
+  end
+
+  def response(conn, {:error, :not_found}, :protobuf) do
+    conn
+    |> put_resp_header(@content_type_hdr, accept_header(conn))
+    |> send_resp(404, "")
+    |> halt()
+  end
+
+  def response(conn, {:ok, data}, :json) do
     conn
     |> put_status(200)
     |> json(data)
   end
 
-  def response(conn, {:error, :not_found}) do
+  def response(conn, {:error, :not_found}, :json) do
     conn
     |> put_status(404)
     |> json(%{message: "Data not found"})
   end
-  
+
+  def response(conn, data, type) do
+    Logger.error("Failed to process reply with data #{inspect data} and type #{type}")
+    conn
+    |> put_status(503)
+    |> json(%{message: "Internal Server Error"})
+  end
+
+  ##
+  ## Internal functions
+  ##
+  defp accept_header(conn) do
+    conn |> get_req_header(@accept_hdr) |> List.first
+  end
+
+  defp get_data_type(conn) do
+    accept_hdr = accept_header(conn)
+    case Enum.member?(@protobuf_headers, accept_hdr) do
+      :true  -> :protobuf
+      :false -> :json
+    end
+  end
+
 end

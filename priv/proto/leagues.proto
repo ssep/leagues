@@ -1,0 +1,55 @@
+message Leagues {
+  message League {
+    required string league = 1;
+  }
+
+  enum Version {
+    V1 = 1;
+  }
+
+  required Version version = 1;
+  repeated League leagues = 2;
+}
+
+message Seasons {
+  message Season {
+    required string season = 1;
+  }
+
+  enum Version {
+    V1 = 1;
+  }
+
+  required Version version = 1;
+  required string league = 2;
+  repeated Season seasons = 3;
+}
+
+message Scores {
+  message Score {
+    enum RType {
+      H = 1;
+      D = 2;
+      A = 3;
+    }
+
+    required string home_team = 1;
+    required string away_team = 2;
+    required string date = 3;
+    required uint32 ftag = 4;
+    required uint32 fthg = 5;
+    required RType  ftr = 6;
+    required uint32 htag = 7;
+    required uint32 hthg = 8;
+    required RType  htr = 9;
+  }
+
+  enum Version {
+    V1 = 1;
+  }
+
+  required Version version = 1;
+  required string  league = 2;
+  required string  season = 3;
+  repeated Score   scores = 4;
+}
