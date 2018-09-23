@@ -6,10 +6,13 @@
  *
  * @apiSuccess {List} leagues Available leagues to be requested
  *
- * @apiExample {curl} Example usage:
- *     curl -i http://localhost/v1/leagues/
+ * @apiExample {curl} Example JSON usage:
+ *     curl -s http://localhost/v1/leagues/
  *
- * @apiSuccessExample Success-Response:
+ * @apiExample {curl} Example Proto Buffers usage:
+ *     curl -s -H 'accept: application/x-protobuf' http://localhost:8080/v1/leagues/ | hexdump 
+ *
+ * @apiSuccessExample Success-Response (JSON):
  *     HTTP/1.1 200 OK
  *     {
  *       "leagues": [
@@ -18,6 +21,12 @@
  *          "o0"
  *        ]
  *     }
+ *
+ * @apiSuccessExample Success-Response (Proto Buffers piped to hexdump):
+ * 
+ * 0000000 0108 0412 020a 3164 0412 020a 3065 0512
+ * 0000010 030a 7073 1231 0a05 7303 3270          
+ * 000001c
  */
 
  /**
@@ -38,15 +47,15 @@
  *     {
  *       "league" : "sp1",
  *       "seasons" : [
- *                    "201516",
- *                    "201617"
- *                   ]
+ *         "201516",
+ *         "201617"
+ *       ]
  *     }
  *
  * @apiErrorExample {json} Error-Response:
  *     HTTP/1.1 404 Not Found
  *     {
- *       "error": "LeagueNotFound"
+ *       "error": "NotFound"
  *     }
  *
  */
@@ -78,38 +87,28 @@
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *     {
+ *       "count": 1,
  *       "league" : "sp1",
  *       "season" : "201617",
  *       "scores" : [
- *                   { 
- *                    "date" : "19/08/16",
- *                    "home_team" : "La Coruna",
- *                    "away_team" : "Eibar",
- *                    "fthg" : 2,
- *                    "ftag" : 1,
- *                    "ftr" : "H",
- *                    "hthg" : 0,
- *                    "htag" : 0,
- *                    "htr" : "D"
- *                   },
- *                   { 
- *                    "date" : "19/08/16",
- *                    "home_team" : "Malaga",
- *                    "away_team" : "Osasuna",
- *                    "fthg" : 1,
- *                    "ftag" : 1,
- *                    "ftr" : "D",
- *                    "hthg" : 0,
- *                    "htag" : 0,
- *                    "htr" : "D"
- *                   }
- *                  ]
+ *         {
+ *           "away_team": "Levante",
+ *           "date": "15/05/16",
+ *           "ftag": 1,
+ *           "fthg": 3,
+ *           "ftr": "H",
+ *           "home_team": "Vallecano",
+ *           "htag": 0,
+ *           "hthg": 2,
+ *           "htr": "H"
+ *          }
+ *        ]
  *     }
  *
  * @apiErrorExample {json} Error-Response:
  *     HTTP/1.1 404 Not Found
  *     {
- *       "error": "SeasonNotFound"
+ *       "error": "NotFound"
  *     }
  *
  */

@@ -1,3 +1,5 @@
+DOC_PATH = doc/apidoc/
+
 .PHONY: deps compile test doc clean
 
 deps:
@@ -13,7 +15,9 @@ shell: compile
 	iex -S mix
 
 clean:
-	rm -rf doc/apidoc
+	mix clean --deps
+	rm -rf ${DOC_PATH}
 
 doc:
-	apidoc -v -i priv/api/ -o doc/apidoc/
+	apidoc -v -i priv/api/ -o ${DOC_PATH}
+	@echo "Open in your browser: $(shell pwd)/${DOC_PATH}index.html"

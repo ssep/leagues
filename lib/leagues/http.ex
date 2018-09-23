@@ -33,14 +33,14 @@ defmodule Leagues.Http do
     Logger.debug "400: Invalid URL at path /#{e.path_info}"
     conn
     |> put_status(400)
-    |> json(%{message: "Not implemented"})
+    |> json(%{error: "Not implemented"})
   end
 
   rescue_from :all, as: e do
     IO.inspect e
     conn
     |> put_status(500)
-    |> json(%{message: "Server Error"})
+    |> json(%{error: "Server Error"})
   end
 
   mount Leagues.Http.Leagues.V1
@@ -78,14 +78,14 @@ defmodule Leagues.Http do
   def response(conn, {:error, :not_found}, :json) do
     conn
     |> put_status(404)
-    |> json(%{message: "Data not found"})
+    |> json(%{error: "Not Found"})
   end
 
   def response(conn, data, type) do
     Logger.error("Failed to process reply with data #{inspect data} and type #{type}")
     conn
     |> put_status(503)
-    |> json(%{message: "Internal Server Error"})
+    |> json(%{error: "Internal Server Error"})
   end
 
   ##
