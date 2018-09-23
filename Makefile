@@ -14,6 +14,10 @@ test: compile
 shell: compile
 	iex -S mix
 
+release: deps
+	MIX_ENV=prod mix compile
+	MIX_ENV=prod mix release
+
 clean:
 	mix clean --deps
 	rm -rf ${DOC_PATH}

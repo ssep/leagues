@@ -28,6 +28,18 @@ npm install apidoc -g
 
 ## How to use
 
+### Creating a release
+
+To create a release execute
+
+```
+make release
+```
+
+__NOTE__: The release uses [distillery](https://github.com/bitwalker/distillery) library to generate all the required files for the application packaging
+
+### How to run
+
 There are two option to run the application: locally or as a release using `docker`
 
 ### Running locally
@@ -79,7 +91,7 @@ The storage of the application is implemented as a simple `GenServer` that encap
 - A leagues `map` in the `GenServer` state to efficiently provide leagues and seasons imformation.
 - ETS based storage to have all scores indexed by league / season
 
-It also self initilializes by loading a default `data.csv` file using [csv](https://github.com/beatrichartz/csv) library.
+It also self initilializes by loading a default [data.csv](priv/data.csv) file using [csv](https://github.com/beatrichartz/csv) library.
 
 Functionality is implemented in the modules:
 
