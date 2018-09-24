@@ -26,6 +26,30 @@ To install `apidoc` (once `npm` is installed), run:
 npm install apidoc -g
 ```
 
+### Basic requests
+
+These are the basic requests supported:
+
+- Get available leagues
+
+```
+curl -s http://127.0.0.1/v1/leagues/
+```
+
+- Get seasons for league `sp1`
+
+```
+curl -s http://127.0.0.1/v1/leagues/sp1/seasons
+```
+
+- Get scores for league `sp1` and season `201516`
+
+```
+curl -s http://127.0.0.1/v1/leagues/sp1/seasons/201516/scores
+```
+
+__NOTE__: For more details see the API doc
+
 ## How to use
 
 ### Creating a release
@@ -54,6 +78,29 @@ It will get all dependencies, compile and run the application
 
 ### Running with docker
 
+To build it run:
+
+```
+make deploy
+```
+
+To take it down run
+
+```
+make undeploy
+```
+
+#### What is included
+
+To do this deploy, a docker compose file is used to create:
+
+- Three instances running the application
+- An HA proxy instance listerning on port 80 balancing the request to the application instances
+
+To be noted in HA proxy configuration:
+
+- It uses round robin to balance requests
+- It also has port `1936` open in the localhost to have access to the statistics page (use `stats:stats` to access)
 
 ## Application structure
 
@@ -70,7 +117,7 @@ High level modules are:
 
 ### HTTP API
 
-The HTTP API functionality is implemented on top of [maru](https://github.com/elixir-maru/maru) Framework.
+The HTTP API functionality is implemented on top of [maru](https://github.com/elixir-maru/maru) Framework. Application is started by default using port `8080`
 
 Two formats are supported for the data:
 
