@@ -34,6 +34,7 @@ config :leagues, Leagues.Http.Server,
   adapter: Plug.Adapters.Cowboy2,
   plug: Leagues.Http,
   scheme: :http,
+  ip: {0, 0, 0, 0},
   port: 8080
 
 config :leagues,
