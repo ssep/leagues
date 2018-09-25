@@ -2,15 +2,40 @@ version: "3"
 
 services:
 
+  influxdb:
+    image: tutum/influxdb
+    container_name: influxdb
+    ports:
+      - 4444:4444/udp
+      - 8083:8083
+      - 8086:8086
+    environment:
+      - UDP_DB=metrics
+    networks:
+      - web
+  
   leagues:
     image: leagues
     build:
       context: .
     ports:
       - 8000-8010:8080
+    links:
+      - influxdb
     networks:
       - web
-      
+
+  grafana:
+    image: grafana/grafana
+    depends_on:
+      - influxdb
+    ports:
+      - 3000:3000
+    links:
+      - influxdb
+    networks:
+      - web
+
   proxy: 
     image: haproxy
     depends_on:
@@ -22,7 +47,7 @@ services:
       - 1936:1936
     networks:
       - web
-
+      
 networks:
   web:
     driver: bridge

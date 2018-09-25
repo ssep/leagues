@@ -102,12 +102,48 @@ To be noted in HA proxy configuration:
 - It uses round robin to balance requests
 - It also has port `1936` open in the localhost to have access to the statistics page (use `stats:stats` to access)
 
+Also, two extra containers are created in order to provide metrics functionality:
+
+- InfluxDb
+- Grafana
+
+Metrics included are:
+
+- Request count by status reply
+- Request count by endpoint
+- `vmstats` application reported metrics
+
+##### InfluxDB
+
+This is an influxDB container where all metric will be pushed by the instance applications.
+
+In provides the following functionality:
+
+- Exposes port `8083` for administration (no credentials)
+- Exposes port `8086` for for HTTP interface (no credentials)
+- Exposes UDP port `4444` to receive metrics
+- Containers linked to it can find it using `influxdb` as hostname
+
+All application containers are linked to it in order to be able to send the metrics. Configuration is set in `config/prod.exs`. This means that applications will report data only if production environment is used
+
+##### Grafana
+
+A `grafana` container is created linked to `influxdb`. To see and create metrics follow these steps:
+
+- Access the container on `http://localhost:3000`
+- Credentials to access are `admin:admin`
+- Create a data source:
+  - Type should be InfluxDb
+  - URL should be set to `http://influxdb:8086`
+  - Database should be set to `metrics`
+
 ## Application structure
 
-`leagues` is a simple OTP application. It has a main supervisor with two children:
+`leagues` is a simple OTP application. It has a main supervisor with three children:
 
 - HTTP API
 - Storage
+- Metrics
 
 High level modules are:
 
@@ -145,3 +181,13 @@ Functionality is implemented in the modules:
 - __Leagues.Storage__: `GenServer` that exposes API to get requires data: leagues, seasons and scores.
 - __Leagues.Storage.Ets__: ETS based implementation of the storage. Table is configured as a `bag` to simplify querying scores for league / season
 - __Leagues.Score__: Utility module to parse the data from the CSV file into a formated map to be returned to the client.
+
+### Metrics
+
+Metrics are implemented using application [fluxter](https://github.com/lexmag/fluxter). 
+
+Functionality is implemented in module:
+
+- __Leagues.Metrics__: It implements functions `count/1` and `count/2` to send metrics with and without tags. Also, it implements the `vmstats` behavior and `vmstats` dependency is included to send metrics.
+
+__NOTE__: It is configured to send metrics only when using production environment. For other environments, default configuration is used, which points to `8092` and `127.0.0.1`

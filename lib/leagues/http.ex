@@ -31,12 +31,14 @@ defmodule Leagues.Http do
   """
   rescue_from Maru.Exceptions.NotFound, as: e do
     Logger.debug "400: Invalid URL at path /#{e.path_info}"
+    Leagues.Metrics.count("request.count", [status: 400])
     conn
     |> put_status(400)
     |> json(%{error: "Not implemented"})
   end
 
   rescue_from :all, as: e do
+    Leagues.Metrics.count("request.count", [status: 500])
     IO.inspect e
     conn
     |> put_status(500)
@@ -56,6 +58,7 @@ defmodule Leagues.Http do
 
   def response(conn, {:ok, data}, :protobuf) do
     Logger.debug("Processing protobuf with data #{inspect data}")
+    Leagues.Metrics.count("request.count", [status: 200, type: "protobuf"])
     conn
     |> put_resp_header(@content_type_hdr, accept_header(conn))
     |> send_resp(200, Leagues.Http.Protobuf.encode(data))
@@ -63,6 +66,7 @@ defmodule Leagues.Http do
   end
 
   def response(conn, {:error, :not_found}, :protobuf) do
+    Leagues.Metrics.count("request.count", [status: 404, type: "protobuf"])
     conn
     |> put_resp_header(@content_type_hdr, accept_header(conn))
     |> send_resp(404, "")
@@ -70,18 +74,21 @@ defmodule Leagues.Http do
   end
 
   def response(conn, {:ok, data}, :json) do
+    Leagues.Metrics.count("request.count", [status: 200, type: "json"])
     conn
     |> put_status(200)
     |> json(data)
   end
 
   def response(conn, {:error, :not_found}, :json) do
+    Leagues.Metrics.count("request.count", [status: 404, type: "json"])
     conn
     |> put_status(404)
     |> json(%{error: "Not Found"})
   end
 
   def response(conn, data, type) do
+    Leagues.Metrics.count("request.count", [status: 503,type: "#{type}"])
     Logger.error("Failed to process reply with data #{inspect data} and type #{type}")
     conn
     |> put_status(503)

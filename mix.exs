@@ -14,7 +14,7 @@ defmodule Leagues.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger, :maru, :exprotobuf],
+      extra_applications: [:logger, :maru, :exprotobuf, :fluxter],
       mod: {Leagues, []}
     ]
   end
@@ -27,7 +27,9 @@ defmodule Leagues.MixProject do
       {:jason, "~> 1.0"},
       {:csv, "~> 2.0.0"},
       {:exprotobuf, "~> 1.2.9"},
-      {:distillery, "~> 2.0"}
+      {:distillery, "~> 2.0"},
+      {:fluxter, "~> 0.7"},
+      {:vmstats, "~> 2.2"}
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"},
     ]

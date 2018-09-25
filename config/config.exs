@@ -46,4 +46,8 @@ config :maru, Leagues.Http,
     using: :path
   ]
 
+ config :vmstats,
+  sink: Leagues.Metrics,
+  interval: 3000 #ms
+
 config :logger, level: :debug

@@ -12,7 +12,8 @@ defmodule Leagues.Sup do
   def init(_arg) do
     children = [
       Leagues.Storage,
-      Leagues.Http.Server
+      Leagues.Http.Server,
+      Leagues.Metrics
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
