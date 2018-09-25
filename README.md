@@ -92,6 +92,18 @@ make undeploy
 
 #### What is included
 
+```
+        HA Proxy
+       /        \
+      /          \
+     v            v
+ Leagues  ...  Leagues
+     \           /
+      \         /
+       v       v
+       Influx DB   <--- Grafana
+```
+
 To do this deploy, a docker compose file is used to create:
 
 - Three instances running the application
@@ -126,6 +138,8 @@ In provides the following functionality:
 
 All application containers are linked to it in order to be able to send the metrics. Configuration is set in `config/prod.exs`. This means that applications will report data only if production environment is used
 
+__NOTE__: No external volumes are used. This means that all data is inside the container and will be lost if the container is recreated.
+
 ##### Grafana
 
 A `grafana` container is created linked to `influxdb`. To see and create metrics follow these steps:
@@ -144,6 +158,14 @@ A `grafana` container is created linked to `influxdb`. To see and create metrics
 - HTTP API
 - Storage
 - Metrics
+
+```
+        Supervisor
+       /     |    \
+      /      |     \
+     v       v      v
+HTTP API  Storage  Metrics
+```
 
 High level modules are:
 
